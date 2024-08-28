@@ -42,13 +42,24 @@ cd nuxt-authentication-starter-template
 npm install
 ```
 
-3. **Run the development server:**
+3. **Setup environment variables:**
+   - **Create a .env file in the root directory** based on the .env.example file provided.
+   - **Fill in the following environment variables:**
+
+```
+DATABASE_URL=<your-mongodb-url>
+JWT_REFRESH_SECRET=<your-refresh-secret-key>
+JWT_ACCESS_SECRET=<your-access-secret-key>
+JWT_VERIFICATION_SECRET=<your-verification-secret-key>
+```
+
+4. **Run the development server:**
 
 ```bash
 npm run dev
 ```
 
-4. **Access the API:**
+5. **Access the server:**
    The server will be available at http://localhost:3000.
 
 ## Usage
