@@ -49,7 +49,7 @@ npm run dev
 ```
 
 4. **Access the API:**
-   The API will be available at http://localhost:3000.
+   The server will be available at http://localhost:3000.
 
 ## Usage
 
@@ -75,5 +75,5 @@ Contributions are welcome! Feel free to open an issue or submit a pull request.
 
 ## Disclaimer
 
-This template is intended to be a starting point for building a user management API. It is not intended to be a complete solution. You may need to modify the code and add additional features to meet your specific needs.
+This template is intended to be a starting point to building a full-stack application. It is not intended to be a complete solution. You may need to modify the code and add additional features to meet your specific needs.
 
