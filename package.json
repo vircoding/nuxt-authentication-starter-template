@@ -14,11 +14,18 @@
   "dependencies": {
     "@nuxt/eslint": "^0.5.3",
     "@prisma/client": "^5.19.0",
+    "@types/bcrypt": "^5.0.2",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/nodemailer": "^6.4.15",
+    "bcrypt": "^5.1.1",
+    "handlebars": "^4.7.8",
+    "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^6.9.14",
     "nuxt": "^3.13.0",
-    "vue": "latest"
+    "vue": "latest",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "prisma": "^5.19.0"
   }
 }
-

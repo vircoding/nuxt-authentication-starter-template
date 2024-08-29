@@ -51,6 +51,9 @@ DATABASE_URL=<your-mongodb-url>
 JWT_REFRESH_SECRET=<your-refresh-secret-key>
 JWT_ACCESS_SECRET=<your-access-secret-key>
 JWT_VERIFICATION_SECRET=<your-verification-secret-key>
+EMAIL_HOST=<host-for-sending-emails>
+EMAIL_USER=<your-email>
+EMAIL_PASSWORD=<your-email-password>
 ```
 
 4. **Run the development server:**
