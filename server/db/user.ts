@@ -69,3 +69,17 @@ export const deleteUserByIdIfNotVerified = (id: string, timeout: number) => {
     }, timeout);
   });
 };
+
+export const findUserById = (id: string) => {
+  return prisma.user.findUniqueOrThrow({ where: { id } }); // throws P2025 if not found
+};
+
+export const verifyUser = (id: string) => {
+  return prisma.user.update({
+    where: { id },
+    data: {
+      verified: true,
+      verificationCode: null,
+    },
+  });
+};

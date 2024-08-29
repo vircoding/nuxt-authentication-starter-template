@@ -16,3 +16,7 @@ export const generateVerificationToken = (payload: { uid: string; verificationCo
   return jwt.sign(payload, verificationSign, { expiresIn: '5m' });
 };
 
+export const decodeVerificationToken = (token: string) => {
+  return jwt.verify(token, verificationSign) || null;
+};
+
