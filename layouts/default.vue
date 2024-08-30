@@ -26,5 +26,10 @@
 
     <!-- Content -->
     <slot />
+
+    <!-- Footer -->
+    <footer>
+      <h5>Made by <a href="https://github.com/vircoding">@vircoding</a> 🍷🧐</h5>
+    </footer>
   </div>
 </template>

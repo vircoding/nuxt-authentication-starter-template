@@ -4,7 +4,7 @@ This repository provides a starting point for building secure and robust authent
 
 ## Features
 
-- **User management:**
+- **User Management:**
 
   - Registration
   - Login
@@ -21,11 +21,13 @@ This repository provides a starting point for building secure and robust authent
   - Email Verification for Account Confirmation
 
 - **Scalable Architecture:**
+
   - [Nuxt](https://nuxt.com/) as the full-stack framework
-  - [Prisma](https://www.prisma.io/) as the ORM for managing the database
   - [MongoDB](https://www.mongodb.com/) as a non-relational database
+  - [Prisma](https://www.prisma.io/) as the ORM for managing the database
   - [Nodemailer](https://nodemailer.com/) for sending emails
-  - [Zod](https://zod.dev/) for data validation
+  - [Zod](https://zod.dev/) for data validatio
+  - [Handlebars](https://handlebarsjs.com/) for dynamic templates
 
 ## Getting Started
 
