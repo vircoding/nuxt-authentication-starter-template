@@ -1,7 +1,6 @@
 import { registerSchema } from '~/server/schemas/user.schema';
 import { createUser, deleteUserByIdIfNotVerified, deleteUserById } from '~/server/db/user';
 import { createRefreshToken } from '~/server/db/refreshToken';
-import { userTransformer } from '~/server/transformers/user';
 import { H3Error } from 'h3';
 import { ZodError } from 'zod';
 import { Prisma } from '@prisma/client';

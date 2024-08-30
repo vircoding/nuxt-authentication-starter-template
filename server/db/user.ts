@@ -83,3 +83,7 @@ export const verifyUser = (id: string) => {
     },
   });
 };
+
+export const findUserByEmail = (email: string) => {
+  return prisma.user.findUniqueOrThrow({ where: { email } }); // throws P2025 if not found
+};
