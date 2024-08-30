@@ -43,7 +43,6 @@ export default defineEventHandler(async (event) => {
       access_token: accessToken,
       user: userTransformer(user),
     }
-    return user
   }
   catch (error) {
     // Zod Error handler
