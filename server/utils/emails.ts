@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer';
+import nodemailer from 'nodemailer'
 
 const transporter = nodemailer.createTransport({
   host: useRuntimeConfig().nodemailerHost,
@@ -8,45 +8,47 @@ const transporter = nodemailer.createTransport({
     user: useRuntimeConfig().nodemailerUser,
     pass: useRuntimeConfig().nodemailerPassword,
   },
-});
+})
 
-const transportConfirmationEmail = (email: string, content: string) => {
+function transportConfirmationEmail(email: string, content: string) {
   return transporter.sendMail({
     from: '"vircoding API" <vircoding98@gmail.com>',
     to: email,
     subject: 'Complete your account verification',
     html: content,
-  });
-};
+  })
+}
 
-export const sendConfirmationEmail = (email: string, content: string, attempts: number) => {
+export function sendConfirmationEmail(email: string, content: string, attempts: number) {
   return new Promise((resolve, reject) => {
     transportConfirmationEmail(email, content).catch(async () => {
-      let attemptCount = attempts - 1;
+      let attemptCount = attempts - 1
       while (attemptCount > 0) {
         try {
-          await new Promise((resolve, reject) => {
+          await new Promise((resolve) => {
             setTimeout(async () => {
               transportConfirmationEmail(email, content)
                 .then(() => {
-                  resolve(true);
+                  resolve(true)
                 })
                 .catch(() => {
-                  reject();
-                });
-            }, 5000);
+                  throw new Error('An error has ocuured while sending the email')
+                })
+            }, 5000)
           }).catch((error) => {
-            throw error;
-          });
+            throw error
+          })
 
-          break;
-        } catch (error) {
-          attemptCount--;
-          if (attemptCount <= 0) reject(error);
+          break
+        }
+        catch (error) {
+          attemptCount--
+          if (attemptCount <= 0)
+            reject(error)
         }
       }
-    });
+    })
 
-    resolve(true);
-  });
-};
+    resolve(true)
+  })
+}

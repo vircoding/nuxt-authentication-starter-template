@@ -1,9 +1,9 @@
-import { prisma } from '.';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt'
+import { prisma } from '.'
 
-export const createUser = (data: { username: string; email: string; password: string }) => {
-  const hashPassword = bcrypt.hashSync(data.password, 10);
-  const verificationCode = crypto.randomUUID();
+export function createUser(data: { username: string, email: string, password: string }) {
+  const hashPassword = bcrypt.hashSync(data.password, 10)
+  const verificationCode = crypto.randomUUID()
 
   return prisma.user.create({
     data: {
@@ -12,19 +12,19 @@ export const createUser = (data: { username: string; email: string; password: st
       password: hashPassword,
       verificationCode,
     },
-  }); // throws P2002 if email already exists
-};
+  }) // throws P2002 if email already exists
+}
 
-const findUserNotVerifiedById = (id: string) => {
+function findUserNotVerifiedById(id: string) {
   return prisma.user.findUniqueOrThrow({
     where: {
       id,
       verified: false,
     },
-  });
-};
+  })
+}
 
-export const deleteUserById = (id: string) => {
+export function deleteUserById(id: string) {
   return new Promise((resolve, reject) => {
     prisma.refreshToken
       .deleteMany({
@@ -38,52 +38,53 @@ export const deleteUserById = (id: string) => {
             where: { id },
           })
           .catch((error) => {
-            reject(error);
-          });
+            reject(error)
+          })
       })
       .catch((error) => {
-        reject(error);
-      });
+        reject(error)
+      })
 
-    resolve(true);
-  });
-};
+    resolve(true)
+  })
+}
 
-export const deleteUserByIdIfNotVerified = (id: string, timeout: number) => {
-  return new Promise((resolve, reject) => {
+export function deleteUserByIdIfNotVerified(id: string, timeout: number) {
+  return new Promise((resolve) => {
     setTimeout(async () => {
       await findUserNotVerifiedById(id)
         .then(async () => {
           await deleteUserById(id)
             .then(() => {
-              resolve(true);
+              resolve(true)
             })
             .catch(() => {
-              reject();
-            });
+              throw new Error('An error has ocurred while deleting the user')
+            })
         })
         .catch((error) => {
-          if (error.message === 'No User found') resolve(true);
-          reject();
-        });
-    }, timeout);
-  });
-};
+          if (error.message === 'No User found')
+            resolve(true)
+          throw new Error('An error has ocurred while finding the user')
+        })
+    }, timeout)
+  })
+}
 
-export const findUserById = (id: string) => {
-  return prisma.user.findUniqueOrThrow({ where: { id } }); // throws P2025 if not found
-};
+export function findUserById(id: string) {
+  return prisma.user.findUniqueOrThrow({ where: { id } }) // throws P2025 if not found
+}
 
-export const verifyUser = (id: string) => {
+export function verifyUser(id: string) {
   return prisma.user.update({
     where: { id },
     data: {
       verified: true,
       verificationCode: null,
     },
-  });
-};
+  })
+}
 
-export const findUserByEmail = (email: string) => {
-  return prisma.user.findUniqueOrThrow({ where: { email } }); // throws P2025 if not found
-};
+export function findUserByEmail(email: string) {
+  return prisma.user.findUniqueOrThrow({ where: { email } }) // throws P2025 if not found
+}

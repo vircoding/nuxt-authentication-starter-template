@@ -92,4 +92,3 @@ Contributions are welcome! Feel free to open an issue or submit a pull request.
 ## Disclaimer
 
 This template is intended to be a starting point to building a full-stack application. It is not intended to be a complete solution. You may need to modify the code and add additional features to meet your specific needs.
-

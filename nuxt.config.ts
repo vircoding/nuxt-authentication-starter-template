@@ -11,5 +11,9 @@ export default defineNuxtConfig({
     nodemailerUser: process.env.EMAIL_USER,
     nodemailerPassword: process.env.EMAIL_PASSWORD,
   },
-});
-
+  eslint: {
+    config: {
+      standalone: false,
+    },
+  },
+})

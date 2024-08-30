@@ -5,4 +5,3 @@
     </NuxtLayout>
   </div>
 </template>
-

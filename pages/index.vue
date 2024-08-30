@@ -60,9 +60,7 @@
       <h2>Getting Started</h2>
       <p>
         Refer to the
-        <a href="https://github.com/vircoding/nuxt-authentication-starter-template"
-          >GitHub repository</a
-        >
+        <a href="https://github.com/vircoding/nuxt-authentication-starter-template">GitHub repository</a>
         for more details.
       </p>
     </div>
@@ -74,8 +72,7 @@
         This project is licensed under the MIT License. See the
         <a
           href="https://github.com/vircoding/nuxt-authentication-starter-template/blob/main/LICENSE"
-          >License</a
-        >
+        >License</a>
         file for more details.
       </p>
     </div>

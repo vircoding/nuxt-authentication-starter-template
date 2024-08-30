@@ -8,17 +8,23 @@
         <ul>
           <!-- Home -->
           <li>
-            <NuxtLink to="/">Home</NuxtLink>
+            <NuxtLink to="/">
+              Home
+            </NuxtLink>
           </li>
 
           <!-- Login -->
           <li>
-            <NuxtLink to="/auth/login">Login</NuxtLink>
+            <NuxtLink to="/auth/login">
+              Login
+            </NuxtLink>
           </li>
 
           <!-- Register -->
           <li>
-            <NuxtLink to="/auth/register">Register</NuxtLink>
+            <NuxtLink to="/auth/register">
+              Register
+            </NuxtLink>
           </li>
         </ul>
       </nav>

@@ -1,16 +1,16 @@
 export class CustomVerifiedError extends Error {
-  name: string;
+  name: string
 
   constructor(message: string) {
-    super(message);
-    this.name = 'Verified Error';
+    super(message)
+    this.name = 'Verified Error'
   }
 }
 
 export class CustomPasswordError extends Error {
-  name: string;
+  name: string
   constructor(message: string) {
-    super(message);
-    this.name = 'Password Error';
+    super(message)
+    this.name = 'Password Error'
   }
 }
