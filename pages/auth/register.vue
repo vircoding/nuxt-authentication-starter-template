@@ -8,12 +8,8 @@ const input = ref({
 
 async function onSubmit() {
   try {
-    const data = await $fetch('/api/auth/register', {
-      method: 'POST',
-      body: input.value,
-    })
-
-    console.warn(data)
+    await useRegister(input.value)
+    console.warn('Register sucessfully')
   }
   catch (error) {
     console.error(error)
