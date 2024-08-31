@@ -1,5 +1,3 @@
-<script lang="ts"></script>
-
 <template>
   <div>
     <header>
@@ -39,3 +37,10 @@
     </footer>
   </div>
 </template>
+
+<style scoped>
+ul {
+  display: flex;
+  gap: 40px;
+}
+</style>
