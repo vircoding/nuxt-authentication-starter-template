@@ -1,7 +1,7 @@
 import { H3Error } from 'h3'
 import { ZodError } from 'zod'
 import { Prisma } from '@prisma/client'
-import { registerSchema } from '~/server/schemas/user.schema'
+import { registerSchema } from '~/schemas/user.schema'
 import { createUser, deleteUserById, deleteUserByIdIfNotVerified } from '~/server/db/user'
 import { createRefreshToken } from '~/server/db/refreshToken'
 

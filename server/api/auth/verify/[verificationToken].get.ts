@@ -1,7 +1,7 @@
 import {
   decodedVerificationTokenSchema,
   verificationTokenSchema,
-} from '~/server/schemas/token.schema'
+} from '~/schemas/token.schema'
 import { findUserById, verifyUser } from '~/server/db/user'
 import { CustomVerifiedError } from '~/server/models/error'
 
