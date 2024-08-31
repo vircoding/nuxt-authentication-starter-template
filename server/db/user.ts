@@ -50,7 +50,7 @@ export function deleteUserById(id: string) {
 }
 
 export function deleteUserByIdIfNotVerified(id: string, timeout: number) {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     setTimeout(async () => {
       await findUserNotVerifiedById(id)
         .then(async () => {
@@ -58,18 +58,18 @@ export function deleteUserByIdIfNotVerified(id: string, timeout: number) {
             .then(() => {
               resolve(true)
             })
-            .catch(() => {
-              throw new Error('An error has ocurred while deleting the user')
+            .catch((error) => {
+              reject(error)
             })
         })
         .catch((error) => {
           if (error.message === 'No User found')
             resolve(true)
-          throw new Error('An error has ocurred while finding the user')
+          reject(error)
         })
     }, timeout)
   })
-}
+};
 
 export function findUserById(id: string) {
   return prisma.user.findUniqueOrThrow({ where: { id } }) // throws P2025 if not found

@@ -39,7 +39,7 @@ export default defineEventHandler(async (event) => {
       const verificationEmailContent = await getVerificationEmail(user.username, verificationToken)
 
       // Send the verificaion email
-      await sendConfirmationEmail(user.email, verificationEmailContent, 3)
+      await sendConfirmationEmail(user.email, verificationEmailContent)
     }
     catch (error) {
       console.error('An error has ocurred while sending the confirmation email', error)
