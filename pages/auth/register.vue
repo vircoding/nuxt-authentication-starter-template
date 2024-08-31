@@ -9,7 +9,7 @@ const input = ref({
 async function onSubmit() {
   try {
     await useRegister(input.value)
-    console.warn('Register sucessfully')
+    console.info('Register sucessfully')
   }
   catch (error) {
     console.error(error)

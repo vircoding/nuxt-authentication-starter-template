@@ -7,7 +7,7 @@ const input = ref({
 async function onSubmit() {
   try {
     await useLogin(input.value)
-    console.warn('Login sucessfully')
+    console.info('Login sucessfully')
   }
   catch (error) {
     console.error(error)

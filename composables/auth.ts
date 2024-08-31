@@ -15,33 +15,28 @@ function setUser(newUser: { id: string, username: string, verified: boolean }): 
 }
 
 export async function useLogin(body: LoginBody) {
-  try {
-    const data = await $fetch('/api/auth/login', {
+  return new Promise<true>((resolve, reject) => {
+    $fetch('/api/auth/login', {
       method: 'POST',
       body,
-    })
-
-    setAccessToken(data.access_token)
-    setUser(data.user)
-  }
-  catch (error) {
-    console.error(error)
-    throw new Error('An error has ocurred while login')
-  }
+    }).then((data) => {
+      setAccessToken(data.access_token)
+      setUser(data.user)
+      resolve(true)
+    }).catch(error => reject(error))
+  })
 }
 
 export async function useRegister(body: RegisterBody) {
-  try {
-    const data = await $fetch('/api/auth/register', {
+  return new Promise<true>((resolve, reject) => {
+    $fetch('/api/auth/register', {
       method: 'POST',
       body,
-    })
-
-    setAccessToken(data.access_token)
-    setUser(data.user)
-  }
-  catch (error) {
-    console.error(error)
-    throw new Error('An error has ocurred while register')
-  }
+    }).then((data) => {
+      setAccessToken(data.access_token)
+      setUser(data.user)
+      resolve(true)
+    }).catch(error => reject(error),
+    )
+  })
 }

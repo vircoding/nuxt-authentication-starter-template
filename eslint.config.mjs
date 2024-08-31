@@ -7,7 +7,7 @@ export default withNuxt(
     // ...@antfu/eslint-config options
     rules: {
       'node/prefer-global/process': ['error', 'always'],
-      'no-console': ['error', { allow: ['warn', 'error'] }],
+      'no-console': ['error', { allow: ['info', 'warn', 'error'] }],
     },
   }),
   // Your custom configs here
