@@ -3,6 +3,7 @@ import {
   verificationTokenSchema,
 } from '~/schemas/token.schema'
 import { findUserById, verifyUser } from '~/server/db/user'
+import { deleteVerificationCodeById, findVerificationCodeById } from '~/server/db/verificationCode'
 import { CustomVerifiedError } from '~/server/models/error'
 
 export default defineEventHandler(async (event) => {
@@ -14,27 +15,35 @@ export default defineEventHandler(async (event) => {
     verificationToken = await verificationTokenSchema.parseAsync(verificationToken)
 
     // Decode the verification token
-    let payload = decodeVerificationToken(verificationToken)
+    const payload = decodeVerificationToken(verificationToken)
     if (!payload)
       throw new Error('Invalid verification token')
 
     // Validate the decoded verification token
-    payload = await decodedVerificationTokenSchema.parseAsync(payload)
+    const decodedVerificationToken = await decodedVerificationTokenSchema.parseAsync(payload)
 
     // Find the user by id
-    let user = await findUserById(payload.uid)
+    let user = await findUserById(decodedVerificationToken.userId)
 
     // Validate if user its not yet verified
     if (user.verified)
       throw new CustomVerifiedError('This account is verified already')
 
+    // Find the verification code by id
+    const verificationCode = await findVerificationCodeById(decodedVerificationToken.verificationCodeId)
+
     // Validate the verification code
-    if (user.verificationCode !== payload.verificationCode)
+    if (verificationCode.code !== decodedVerificationToken.code)
       throw new Error('Invalid verification token')
 
     // Update the user
     user = await verifyUser(user.id).catch(() => {
       throw new Error('The verification has failed')
+    })
+
+    // Delete the verification code
+    await deleteVerificationCodeById(verificationCode.id).catch((error) => {
+      console.error('An error has ocurred while deleting the verification code', error)
     })
 
     // Get the verification success content

@@ -2,10 +2,11 @@ import bcrypt from 'bcrypt'
 import { H3Error } from 'h3'
 import { ZodError } from 'zod'
 import { Prisma } from '@prisma/client'
+import { UAParser } from 'ua-parser-js'
 import { loginSchema } from '~/schemas/user.schema'
 import { findUserByEmail } from '~/server/db/user'
-import { createRefreshToken } from '~/server/db/refreshToken'
 import { CustomPasswordError } from '~/server/models/error'
+import { createSession } from '~/server/db/sesion'
 
 export default defineEventHandler(async (event) => {
   try {
@@ -23,14 +24,23 @@ export default defineEventHandler(async (event) => {
     if (!passwordMatch)
       throw new CustomPasswordError('Password do not match')
 
-    // Generate the new refresh token
-    const refreshToken = generateRefreshToken({ uid: user.id })
+    // Get and parse the user-agent
+    const ua = getHeader(event, 'user-agent')
+    const parsedUA = UAParser(ua)
 
-    // Create the new refresh token
-    await createRefreshToken({ token: refreshToken, uid: user.id })
+    // Create the session
+    const session = await createSession({
+      userId: user.id,
+      browser: parsedUA.browser.name,
+      os: parsedUA.os.name,
+      cpu: parsedUA.cpu.architecture,
+    })
+
+    // Generate the refresh token
+    const refreshToken = generateRefreshToken({ code: session.code, sessionId: session.id, userId: user.id })
 
     // Generate the access token
-    const accessToken = generateAccessToken({ uid: user.id })
+    const accessToken = generateAccessToken({ userId: user.id })
 
     // Send the refresh token
     setCookie(event, 'refresh_token', refreshToken, {

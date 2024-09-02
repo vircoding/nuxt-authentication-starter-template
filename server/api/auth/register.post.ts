@@ -1,12 +1,14 @@
 import { H3Error } from 'h3'
 import { ZodError } from 'zod'
 import { Prisma } from '@prisma/client'
+import { UAParser } from 'ua-parser-js'
 import { registerSchema } from '~/schemas/user.schema'
 import { createUser, deleteUserById, deleteUserByIdIfNotVerified } from '~/server/db/user'
-import { createRefreshToken } from '~/server/db/refreshToken'
+import { createSession } from '~/server/db/sesion'
+import { createVerificationCode } from '~/server/db/verificationCode'
 
 export default defineEventHandler(async (event) => {
-  let userId: null | string = null
+  let createdUserId: null | string = null
 
   try {
     // Read the body of the request
@@ -17,22 +19,35 @@ export default defineEventHandler(async (event) => {
 
     // Create the new user
     const user = await createUser(data)
-    userId = user.id
+    createdUserId = user.id
+
+    // Get and parse the user-agent
+    const ua = getHeader(event, 'user-agent')
+    const parsedUA = UAParser(ua)
+
+    // Create the session
+    const session = await createSession({
+      userId: user.id,
+      browser: parsedUA.browser.name,
+      os: parsedUA.os.name,
+      cpu: parsedUA.cpu.architecture,
+    })
+
+    // Create the verfication code
+    const verificationCode = await createVerificationCode({ userId: user.id })
 
     // Generate the refresh token
-    const refreshToken = generateRefreshToken({ uid: user.id })
-
-    // Create the refresh token
-    await createRefreshToken({ token: refreshToken, uid: user.id })
+    const refreshToken = generateRefreshToken({ code: session.code, sessionId: session.id, userId: user.id })
 
     // Generate the access token
-    const accessToken = generateAccessToken({ uid: user.id })
+    const accessToken = generateAccessToken({ userId: user.id })
 
     try {
       // Generate the verification token
       const verificationToken = generateVerificationToken({
-        uid: user.id,
-        verificationCode: user.verificationCode as string,
+        code: verificationCode.code,
+        verificationCodeId: verificationCode.id,
+        userId: user.id,
       })
 
       // Get the verification email
@@ -50,7 +65,7 @@ export default defineEventHandler(async (event) => {
       deleteUserByIdIfNotVerified(user.id, 360000)
     }
     catch (error) {
-      console.error('An erros has ocurred while deleting the unverified user', error)
+      console.error('An error has ocurred while deleting the unverified user', error)
     }
 
     // Send the refresh token
@@ -67,9 +82,9 @@ export default defineEventHandler(async (event) => {
   }
   catch (error) {
     // Delete the user if it was created before
-    if (userId) {
+    if (createdUserId) {
       try {
-        await deleteUserById(userId)
+        await deleteUserById(createdUserId)
       }
       catch (error) {
         console.error('An error has ocuured while deleting the previously created user', error)
