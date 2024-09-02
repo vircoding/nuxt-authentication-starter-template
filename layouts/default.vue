@@ -1,3 +1,7 @@
+<script setup lang="ts">
+const user = useUser()
+</script>
+
 <template>
   <div>
     <header>
@@ -26,6 +30,11 @@
           </li>
         </ul>
       </nav>
+
+      <!-- User -->
+      <div v-if="user">
+        <h4>User: {{ user.username }}</h4>
+      </div>
     </header>
 
     <!-- Content -->
@@ -39,6 +48,13 @@
 </template>
 
 <style scoped>
+header {
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 ul {
   display: flex;
   gap: 40px;
