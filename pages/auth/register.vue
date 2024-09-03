@@ -11,7 +11,7 @@ const input = ref({
 async function onSubmit() {
   try {
     await register(input.value)
-    console.info('Register sucessfully')
+    console.info('Register successfully')
   }
   catch (error) {
     console.error(error)

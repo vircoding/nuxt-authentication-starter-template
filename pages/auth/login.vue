@@ -9,7 +9,7 @@ const input = ref({
 async function onSubmit() {
   try {
     await login(input.value)
-    console.info('Login sucessfully')
+    console.info('Login successfully')
   }
   catch (error) {
     console.error(error)
