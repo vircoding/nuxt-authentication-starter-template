@@ -14,7 +14,7 @@
   "dependencies": {
     "@antfu/eslint-config": "^3.0.0",
     "@nuxt/eslint": "^0.5.5",
-    "@prisma/client": "^5.19.0",
+    "@prisma/client": "^5.19.1",
     "@types/bcrypt": "^5.0.2",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/nodemailer": "^6.4.15",
@@ -29,6 +29,6 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "prisma": "^5.19.0"
+    "prisma": "^5.19.1"
   }
 }
