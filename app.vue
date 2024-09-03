@@ -15,5 +15,5 @@ const isMainContentVisible = computed(() => {
   </div>
 
   <!-- Verify -->
-  <VerifyAccount />
+  <VerifyAccount v-else />
 </template>
