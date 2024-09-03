@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const { register } = useAuth()
+
 const input = ref({
   username: '',
   email: '',
@@ -8,7 +10,7 @@ const input = ref({
 
 async function onSubmit() {
   try {
-    await useRegister(input.value)
+    await register(input.value)
     console.info('Register sucessfully')
   }
   catch (error) {

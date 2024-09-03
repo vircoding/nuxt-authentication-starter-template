@@ -4,7 +4,20 @@ import type { loginSchema, registerSchema } from '~/schemas/user.schema'
 type RegisterBody = z.infer<typeof registerSchema>
 type LoginBody = z.infer<typeof loginSchema>
 
-export async function useLogin(body: LoginBody) {
+function register(body: RegisterBody) {
+  return new Promise<true>((resolve, reject) => {
+    $fetch('/api/auth/register', {
+      method: 'POST',
+      body,
+    }).then((data) => {
+      useSetAccessToken(data.access_token)
+      useSetUser(data.user)
+      resolve(true)
+    }).catch(error => reject(error))
+  })
+}
+
+function login(body: LoginBody) {
   return new Promise<true>((resolve, reject) => {
     $fetch('/api/auth/login', {
       method: 'POST',
@@ -17,16 +30,6 @@ export async function useLogin(body: LoginBody) {
   })
 }
 
-export async function useRegister(body: RegisterBody) {
-  return new Promise<true>((resolve, reject) => {
-    $fetch('/api/auth/register', {
-      method: 'POST',
-      body,
-    }).then((data) => {
-      useSetAccessToken(data.access_token)
-      useSetUser(data.user)
-      resolve(true)
-    }).catch(error => reject(error),
-    )
-  })
+export default function () {
+  return { register, login }
 }

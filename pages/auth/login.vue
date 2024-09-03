@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const { login } = useAuth()
+
 const input = ref({
   email: '',
   password: '',
@@ -6,7 +8,7 @@ const input = ref({
 
 async function onSubmit() {
   try {
-    await useLogin(input.value)
+    await login(input.value)
     console.info('Login sucessfully')
   }
   catch (error) {
