@@ -3,10 +3,16 @@ import { z } from 'zod'
 // Refresh token
 export const refreshTokenSchema = z.string()
 
-// { code: string, sessionId: string, userId: string }
 export const decodedRefreshTokenSchema = z.object({
   code: z.string(),
   sessionId: z.string(),
+  userId: z.string(),
+})
+
+// Access Token
+export const accessTokenSchema = z.string()
+
+export const decodedAccessTokenSchema = z.object({
   userId: z.string(),
 })
 

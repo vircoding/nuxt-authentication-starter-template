@@ -30,6 +30,15 @@ function login(body: LoginBody) {
   })
 }
 
+function refresh() {
+  return new Promise<true>((resolve, reject) => {
+    $fetch('/api/auth/refresh', { method: 'POST' }).then((data) => {
+      useSetAccessToken(data.access_token)
+      resolve(true)
+    }).catch(error => reject(error))
+  })
+}
+
 export default function () {
-  return { register, login }
+  return { register, login, refresh }
 }
