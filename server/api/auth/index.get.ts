@@ -6,10 +6,11 @@ import { findUserById } from '~/server/db/user'
 export default defineEventHandler(async (event) => {
   try {
     // TODO Get the userId
-    let userId = event.context.userId
+    const userId = event.context.userId
+    console.info('4-Context: ', userId)
 
     // TODO Validate the userId
-    userId = await userIdSchema.parseAsync(userId)
+    // userId = await userIdSchema.parseAsync(userId)
 
     // TODO Find the user by id
     const user = await findUserById(userId)

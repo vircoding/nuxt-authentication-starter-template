@@ -39,6 +39,28 @@ function refresh() {
   })
 }
 
+function getUser() {
+  return new Promise<true>((resolve, reject) => {
+    $fetch('/api/auth', {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${useAccessToken().value}`,
+      },
+    }).then((data) => {
+      useSetUser(data.user)
+      resolve(true)
+    }).catch(error => reject(error))
+  })
+}
+
+function init() {
+  return new Promise<true>((resolve, reject) => {
+    refresh().then(() => {
+      getUser().then(() => resolve(true)).catch(error => reject(error))
+    }).catch(error => reject(error))
+  })
+}
+
 export default function () {
-  return { register, login, refresh }
+  return { register, login, refresh, getUser, init }
 }

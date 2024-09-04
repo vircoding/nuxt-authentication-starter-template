@@ -28,7 +28,7 @@ async function onSubmit() {
       <input v-model="input.email" type="email" placeholder="Email">
       <input v-model="input.password" type="password" placeholder="Password">
       <input v-model="input.repassword" type="password" placeholder="Repassword">
-      <button>Login</button>
+      <button>Regiter</button>
     </form>
   </div>
 </template>

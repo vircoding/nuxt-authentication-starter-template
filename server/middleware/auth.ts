@@ -5,6 +5,7 @@ import { accessTokenSchema, decodedAccessTokenSchema } from '~/schemas/token.sch
 
 export default defineEventHandler(async (event) => {
   const endpoints = [
+    '/api/auth',
     '/api/auth/',
   ]
 
@@ -13,14 +14,19 @@ export default defineEventHandler(async (event) => {
       // Get the access token
       let accessToken = getHeader(event, 'Authorization')?.split(' ')[1]
 
+      console.info('1-Init: ', accessToken)
+
       // Validate the access token
       accessToken = await accessTokenSchema.parseAsync(accessToken)
+      console.info('2-Validated: ', accessToken)
 
       // Decode the access token
       const payload = decodeAccessToken(accessToken)
+      console.info('3-Decoded: ', payload)
 
       // Validate the decoded access token
       const decodedAccessToken = await decodedAccessTokenSchema.parseAsync(payload)
+      console.info('3-Revalidated: ', decodedAccessToken)
 
       // Add userId to context
       event.context.userId = decodedAccessToken.userId
