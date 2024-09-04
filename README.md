@@ -26,7 +26,7 @@ This repository provides a starting point for building secure and robust authent
   - [MongoDB](https://www.mongodb.com/) as a non-relational database
   - [Prisma](https://www.prisma.io/) as the ORM for managing the database
   - [Nodemailer](https://nodemailer.com/) for sending emails
-  - [Zod](https://zod.dev/) for data validatio
+  - [Zod](https://zod.dev/) for data validation
   - [Handlebars](https://handlebarsjs.com/) for dynamic templates
 
 ## Getting Started

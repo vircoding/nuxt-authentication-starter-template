@@ -12,7 +12,7 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
-    "@antfu/eslint-config": "^3.0.0",
+    "@antfu/eslint-config": "^3.2.0",
     "@nuxt/eslint": "^0.5.5",
     "@prisma/client": "^5.19.1",
     "@types/bcrypt": "^5.0.2",
@@ -22,9 +22,10 @@
     "bcrypt": "^5.1.1",
     "handlebars": "^4.7.8",
     "jsonwebtoken": "^9.0.2",
-    "nodemailer": "^6.9.14",
+    "nodemailer": "^6.9.15",
     "nuxt": "^3.13.0",
     "ua-parser-js": "^1.0.38",
+    "url-pattern": "^1.0.3",
     "vue": "latest",
     "zod": "^3.23.8"
   },
