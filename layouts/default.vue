@@ -16,14 +16,14 @@ const user = userState()
           </li>
 
           <!-- Login -->
-          <li>
+          <li v-if="!user">
             <NuxtLink to="/auth/login">
               Login
             </NuxtLink>
           </li>
 
           <!-- Register -->
-          <li>
+          <li v-if="!user">
             <NuxtLink to="/auth/register">
               Register
             </NuxtLink>
