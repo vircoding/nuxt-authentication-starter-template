@@ -12,8 +12,8 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
-    "@antfu/eslint-config": "^3.2.0",
-    "@nuxt/eslint": "^0.5.5",
+    "@antfu/eslint-config": "^3.4.1",
+    "@nuxt/eslint": "^0.5.6",
     "@prisma/client": "^5.19.1",
     "@types/bcrypt": "^5.0.2",
     "@types/jsonwebtoken": "^9.0.6",
@@ -23,10 +23,10 @@
     "handlebars": "^4.7.8",
     "jsonwebtoken": "^9.0.2",
     "nodemailer": "^6.9.15",
-    "nuxt": "^3.13.0",
+    "nuxt": "^3.13.1",
     "ua-parser-js": "^1.0.38",
     "url-pattern": "^1.0.3",
-    "vue": "latest",
+    "vue": "^3.5.3",
     "zod": "^3.23.8"
   },
   "devDependencies": {
