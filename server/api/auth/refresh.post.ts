@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken'
 import { decodedRefreshTokenSchema, refreshTokenSchema } from '~/schemas/token.schema'
 import { findSessionById, updateSessionCode } from '~/server/db/sesion'
 import { findUserById } from '~/server/db/user'
-import { CustomRefreshTokenError } from '~/server/models/error'
+import { CustomRefreshTokenError } from '~/server/models/Error'
 
 export default defineEventHandler(async (event) => {
   try {
@@ -54,6 +54,8 @@ export default defineEventHandler(async (event) => {
   catch (error) {
     // Refresh Token Format Error handler
     if (error instanceof ZodError || error instanceof CustomRefreshTokenError) {
+      deleteCookie(event, 'refresh_token')
+
       throw createError({
         status: 400,
         statusMessage: 'Bad Request',
@@ -63,6 +65,8 @@ export default defineEventHandler(async (event) => {
 
     // JsonWebToken Error handler
     if (error instanceof jwt.JsonWebTokenError) {
+      deleteCookie(event, 'refresh_token')
+
       if (error instanceof jwt.TokenExpiredError) {
         throw createError({
           status: 401,
@@ -81,6 +85,8 @@ export default defineEventHandler(async (event) => {
 
     // Prisma Error handler
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      deleteCookie(event, 'refresh_token')
+
       // Find User/Session Error handler
       if (error.code === 'P2025') {
         throw createError({

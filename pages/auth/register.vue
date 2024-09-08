@@ -11,10 +11,11 @@ const input = ref({
 async function onSubmit() {
   try {
     await register(input.value)
-    console.info('Register successfully')
+    navigateTo('/')
   }
   catch (error) {
-    console.error(error)
+    if (error instanceof Error)
+      showError(error)
   }
 }
 </script>

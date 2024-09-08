@@ -5,7 +5,7 @@ import { Prisma } from '@prisma/client'
 import { UAParser } from 'ua-parser-js'
 import { loginSchema } from '~/schemas/user.schema'
 import { findUserByEmail } from '~/server/db/user'
-import { CustomPasswordError } from '~/server/models/error'
+import { CustomPasswordError } from '~/server/models/Error'
 import { createSession } from '~/server/db/sesion'
 
 export default defineEventHandler(async (event) => {

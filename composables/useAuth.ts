@@ -1,63 +1,95 @@
 import type { z } from 'zod'
+import { FetchError } from 'ofetch'
+import {
+  AccessTokenExpiredError,
+  FatalError,
+  InvalidAccessTokenError,
+  InvalidRefreshTokenError,
+  RefreshTokenExpiredError,
+} from '~/models/Error'
 import type { loginSchema, registerSchema } from '~/schemas/user.schema'
 
 type RegisterBody = z.infer<typeof registerSchema>
 type LoginBody = z.infer<typeof loginSchema>
 
-function register(body: RegisterBody) {
-  return new Promise<true>((resolve, reject) => {
-    $fetch('/api/auth/register', {
-      method: 'POST',
-      body,
-    }).then((data) => {
-      useSetAccessToken(data.access_token)
-      useSetUser(data.user)
-      resolve(true)
-    }).catch(error => reject(error))
-  })
+async function register(body: RegisterBody) {
+  try {
+    const data = await $fetch('/api/auth/register', { method: 'post', body })
+    accessTokenState().value = data.access_token
+    userState().value = data.user
+  }
+  catch (error) {
+    if (error instanceof FetchError) {
+      // TODO Handle Errors
+      throw new FatalError('Unhadled error')
+    }
+    throw new FatalError('Unexpected error')
+  }
 }
 
-function login(body: LoginBody) {
-  return new Promise<true>((resolve, reject) => {
-    $fetch('/api/auth/login', {
-      method: 'POST',
-      body,
-    }).then((data) => {
-      useSetAccessToken(data.access_token)
-      useSetUser(data.user)
-      resolve(true)
-    }).catch(error => reject(error))
-  })
+async function login(body: LoginBody) {
+  try {
+    const data = await $fetch('/api/auth/login', { method: 'post', body })
+    accessTokenState().value = data.access_token
+    userState().value = data.user
+  }
+  catch (error) {
+    if (error instanceof FetchError) {
+      // TODO Handle Errors
+      throw new FatalError('Unhadled error')
+    }
+    throw new FatalError('Unexpected error')
+  }
 }
 
-function refresh() {
-  return new Promise<true>((resolve, reject) => {
-    $fetch('/api/auth/refresh', { method: 'POST' }).then((data) => {
-      useSetAccessToken(data.access_token)
-      resolve(true)
-    }).catch(error => reject(error))
-  })
+async function refresh() {
+  try {
+    const data = await $fetch('/api/auth/refresh', { method: 'POST' })
+    accessTokenState().value = data.access_token
+  }
+  catch (error) {
+    if (error instanceof FetchError) {
+      if (error.status !== undefined) {
+        if (error.status === 401) {
+          throw new RefreshTokenExpiredError('The refresh token has expired')
+        }
+        else if (error.status === 400) {
+          throw new InvalidRefreshTokenError('Refresh token error')
+        }
+      }
+    }
+    throw new FatalError('Unexpected error')
+  }
 }
 
-function getUser() {
-  return new Promise<true>((resolve, reject) => {
-    $fetch('/api/auth', {
-      method: 'GET',
+async function getUser() {
+  try {
+    const data = await $fetch('/api/auth', {
       headers: {
-        Authorization: `Bearer ${useAccessToken().value}`,
+        Authorization: `Bearer ${accessTokenState().value}`,
       },
-    }).then((data) => {
-      useSetUser(data.user)
-      resolve(true)
-    }).catch(error => reject(error))
-  })
+    })
+    userState().value = data.user
+  }
+  catch (error) {
+    if (error instanceof FetchError) {
+      if (error.status !== undefined) {
+        if (error.status === 401) {
+          throw new AccessTokenExpiredError('The access token has expired')
+        }
+        else if ([400, 404].includes(error.status)) {
+          throw new InvalidAccessTokenError('Access token error')
+        }
+      }
+    }
+    throw new FatalError('Unexpected error')
+  }
 }
 
-function init() {
-  return new Promise<true>((resolve, reject) => {
-    refresh().then(() => {
-      getUser().then(() => resolve(true)).catch(error => reject(error))
-    }).catch(error => reject(error))
+async function init() {
+  await refresh()
+  await getUser().catch (() => {
+    throw new FatalError('Unexpected error')
   })
 }
 

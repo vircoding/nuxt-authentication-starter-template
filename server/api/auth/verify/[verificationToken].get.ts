@@ -4,7 +4,7 @@ import {
 } from '~/schemas/token.schema'
 import { findUserById, verifyUser } from '~/server/db/user'
 import { deleteVerificationCodeById, findVerificationCodeById } from '~/server/db/verificationCode'
-import { CustomVerifiedError } from '~/server/models/error'
+import { CustomVerifiedError } from '~/server/models/Error'
 
 export default defineEventHandler(async (event) => {
   try {

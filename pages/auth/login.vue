@@ -9,10 +9,11 @@ const input = ref({
 async function onSubmit() {
   try {
     await login(input.value)
-    console.info('Login successfully')
+    navigateTo('/')
   }
   catch (error) {
-    console.error(error)
+    if (error instanceof Error)
+      showError(error)
   }
 }
 </script>

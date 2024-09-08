@@ -1,18 +1,22 @@
 <script setup lang="ts">
-const userState = useUser()
+import { FatalError } from '~/models/Error'
+
 const { init } = useAuth()
 
+const user = userState()
+
 const isMainContentVisible = computed(() => {
-  return userState.value ? userState.value.verified : true
+  return user.value ? user.value.verified : true
 })
 
 onBeforeMount(async () => {
   try {
     await init()
-    console.info('Token refreshed')
   }
   catch (error) {
-    console.error(error)
+    if (error instanceof FatalError) {
+      showError(error)
+    }
   }
 })
 </script>
