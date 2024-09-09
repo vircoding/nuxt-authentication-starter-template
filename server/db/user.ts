@@ -25,19 +25,13 @@ function findUserNotVerifiedById(id: string) {
 export function deleteUserById(id: string) {
   return new Promise<true>((resolve, reject) => {
     // Delete user sessions
-    prisma.session.deleteMany({ where: { userId: id } })
-      .then(() => {
-        // Delete user verification code
-        prisma.verificationCode.delete({ where: { userId: id } })
-          .then(() => {
-            // Delete user
-            prisma.user.delete({ where: { id } })
-              .then(() => resolve(true))
-              .catch(error => reject(error))
-          })
-          .catch(error => reject(error))
-      })
-      .catch(error => reject(error))
+    prisma.session.deleteMany({ where: { userId: id } }).then(() => {
+      // Delete user verification code
+      prisma.verificationCode.delete({ where: { userId: id } }).then(() => {
+        // Delete user
+        prisma.user.delete({ where: { id } }).then(() => resolve(true)).catch(error => reject(error))
+      }).catch(error => reject(error))
+    }).catch(error => reject(error))
   })
 }
 

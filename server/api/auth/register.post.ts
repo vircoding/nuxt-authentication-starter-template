@@ -1,21 +1,26 @@
-import { H3Error } from 'h3'
-import { ZodError } from 'zod'
 import { Prisma } from '@prisma/client'
+import { H3Error } from 'h3'
 import { UAParser } from 'ua-parser-js'
+import { ZodError } from 'zod'
 import { registerSchema } from '~/schemas/user.schema'
-import { createUser, deleteUserById, deleteUserByIdIfNotVerified } from '~/server/db/user'
 import { createSession } from '~/server/db/sesion'
+import { createUser, deleteUserById, deleteUserByIdIfNotVerified } from '~/server/db/user'
 import { createVerificationCode } from '~/server/db/verificationCode'
+import { BodyError } from '~/server/models/Error'
 
 export default defineEventHandler(async (event) => {
   let createdUserId: null | string = null
 
   try {
     // Read the body of the request
-    const { username, email, password, repassword } = await readBody(event)
+    const input = await readBody(event)
+
+    // Validate the body
+    if (!input)
+      throw new BodyError('Body is missing')
 
     // Validate the input
-    const data = await registerSchema.parseAsync({ username, email, password, repassword })
+    const data = await registerSchema.parseAsync(input)
 
     // Create the new user
     const user = await createUser(data)
@@ -89,6 +94,15 @@ export default defineEventHandler(async (event) => {
       catch (error) {
         console.error('An error has ocuured while deleting the previously created user', error)
       }
+    }
+
+    // Body Error
+    if (error instanceof BodyError) {
+      throw createError({
+        status: 400,
+        statusMessage: 'Bad Request',
+        message: 'Invalid JSON body',
+      })
     }
 
     // Zod Error handler

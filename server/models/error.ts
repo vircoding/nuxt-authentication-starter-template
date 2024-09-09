@@ -1,4 +1,13 @@
-export class CustomVerifiedError extends Error {
+export class BodyError extends Error {
+  name: string
+
+  constructor(message: string) {
+    super(message)
+    this.name = 'Body Error'
+  }
+}
+
+export class VerifiedError extends Error {
   name: string
 
   constructor(message: string) {
@@ -7,7 +16,7 @@ export class CustomVerifiedError extends Error {
   }
 }
 
-export class CustomPasswordError extends Error {
+export class PasswordError extends Error {
   name: string
   constructor(message: string) {
     super(message)
@@ -15,7 +24,7 @@ export class CustomPasswordError extends Error {
   }
 }
 
-export class CustomRefreshTokenError extends Error {
+export class RefreshTokenError extends Error {
   name: string
   constructor(message: string) {
     super(message)

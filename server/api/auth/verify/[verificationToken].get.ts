@@ -4,7 +4,7 @@ import {
 } from '~/schemas/token.schema'
 import { findUserById, verifyUser } from '~/server/db/user'
 import { deleteVerificationCodeById, findVerificationCodeById } from '~/server/db/verificationCode'
-import { CustomVerifiedError } from '~/server/models/Error'
+import { VerifiedError } from '~/server/models/Error'
 
 export default defineEventHandler(async (event) => {
   try {
@@ -27,7 +27,7 @@ export default defineEventHandler(async (event) => {
 
     // Validate if user its not yet verified
     if (user.verified)
-      throw new CustomVerifiedError('This account is verified already')
+      throw new VerifiedError('This account is verified already')
 
     // Find the verification code by id
     const verificationCode = await findVerificationCodeById(decodedVerificationToken.verificationCodeId)
@@ -59,7 +59,7 @@ export default defineEventHandler(async (event) => {
   }
   catch (error) {
     // Verified Error Handler
-    if (error instanceof CustomVerifiedError) {
+    if (error instanceof VerifiedError) {
       // Get the response content
       const verificationIsVerifiedContent = await getVerificationIsVerified().catch(() => {
         return {

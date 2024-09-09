@@ -3,8 +3,7 @@ import { H3Error } from 'h3'
 import jwt from 'jsonwebtoken'
 import { ZodError } from 'zod'
 import { decodedRefreshTokenSchema, refreshTokenSchema } from '~/schemas/token.schema'
-import { findSessionById, updateSessionCode } from '~/server/db/sesion'
-import { findUserById } from '~/server/db/user'
+import { deleteSessionById, findSessionById } from '~/server/db/sesion'
 import { RefreshTokenError } from '~/server/models/Error'
 
 export default defineEventHandler(async (event) => {
@@ -21,9 +20,6 @@ export default defineEventHandler(async (event) => {
     // Validate the decoded refresh token
     const decodedRefreshToken = await decodedRefreshTokenSchema.parseAsync(payload)
 
-    // Find the user by id
-    const user = await findUserById(decodedRefreshToken.userId)
-
     // Find the session by id
     let session = await findSessionById(decodedRefreshToken.sessionId)
 
@@ -31,25 +27,14 @@ export default defineEventHandler(async (event) => {
     if (session.code !== decodedRefreshToken.code)
       throw new RefreshTokenError('Invalid refresh token')
 
-    // Update the session code
-    session = await updateSessionCode(session.id)
+    // Delete the session
+    session = await deleteSessionById(session.id)
 
-    // Generate the new refresh token
-    refreshToken = generateRefreshToken({ code: session.code, sessionId: session.id, userId: user.id })
-
-    // Generate the new access token
-    const accessToken = generateAccessToken({ userId: user.id })
-
-    // Send the refresh token
-    setCookie(event, 'refresh_token', refreshToken, {
-      httpOnly: true,
-      sameSite: true,
-    })
+    // Delete the refresh token
+    deleteCookie(event, 'refresh_token')
 
     // Send the success response
-    return {
-      access_token: accessToken,
-    }
+    return { session_id: session.id }
   }
   catch (error) {
     // Refresh Token Format Error handler

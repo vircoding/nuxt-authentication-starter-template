@@ -1,28 +1,32 @@
+import { Prisma } from '@prisma/client'
 import bcrypt from 'bcrypt'
 import { H3Error } from 'h3'
-import { ZodError } from 'zod'
-import { Prisma } from '@prisma/client'
 import { UAParser } from 'ua-parser-js'
+import { ZodError } from 'zod'
 import { loginSchema } from '~/schemas/user.schema'
-import { findUserByEmail } from '~/server/db/user'
-import { CustomPasswordError } from '~/server/models/Error'
 import { createSession } from '~/server/db/sesion'
+import { findUserByEmail } from '~/server/db/user'
+import { BodyError, PasswordError } from '~/server/models/Error'
 
 export default defineEventHandler(async (event) => {
   try {
     // Read the body of the request
-    const { email, password } = await readBody(event)
+    const input = await readBody(event)
+
+    // Validate the body
+    if (!input)
+      throw new BodyError('Body is missing')
 
     // Validate the input
-    const data = await loginSchema.parseAsync({ email, password })
+    const data = await loginSchema.parseAsync(input)
 
     // Find the user by email
     const user = await findUserByEmail(data.email)
 
     // Validate the passwords
-    const passwordMatch = await bcrypt.compare(password, user.password)
+    const passwordMatch = await bcrypt.compare(data.password, user.password)
     if (!passwordMatch)
-      throw new CustomPasswordError('Password do not match')
+      throw new PasswordError('Password do not match')
 
     // Get and parse the user-agent
     const ua = getHeader(event, 'user-agent')
@@ -55,6 +59,15 @@ export default defineEventHandler(async (event) => {
     }
   }
   catch (error) {
+    // Body Error
+    if (error instanceof BodyError) {
+      throw createError({
+        status: 400,
+        statusMessage: 'Bad Request',
+        message: 'Invalid JSON body',
+      })
+    }
+
     // Zod Error handler
     if (error instanceof ZodError) {
       const fields = error.errors.map(issue => ({
@@ -75,7 +88,7 @@ export default defineEventHandler(async (event) => {
     // Bad Credentials Error handler
     if (
       (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025')
-      || error instanceof CustomPasswordError
+      || error instanceof PasswordError
     ) {
       throw createError({
         status: 401,

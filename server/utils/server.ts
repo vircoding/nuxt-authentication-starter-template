@@ -1,9 +1,11 @@
 import UrlPattern from 'url-pattern'
 
-export function middlewareMatched(endpoints: string[], path: string) {
-  return endpoints.some((endpoints) => {
-    const pattern = new UrlPattern(endpoints)
+export function middlewareMatched(endpoints: { path: string, method: string }[], path: string, method: string) {
+  const normalizedPath = path.trim().replace(/\/+$/, '')
 
-    return pattern.match(path)
+  return endpoints.some((endpoint) => {
+    const pattern = new UrlPattern(endpoint.path)
+
+    return (pattern.match(normalizedPath) && endpoint.method === method)
   })
 }

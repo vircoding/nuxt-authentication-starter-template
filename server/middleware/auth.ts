@@ -1,15 +1,14 @@
 import { H3Error } from 'h3'
-import { ZodError } from 'zod'
 import jwt from 'jsonwebtoken'
+import { ZodError } from 'zod'
 import { accessTokenSchema, decodedAccessTokenSchema } from '~/schemas/token.schema'
 
 export default defineEventHandler(async (event) => {
   const endpoints = [
-    '/api/auth',
-    '/api/auth/',
+    { path: '/api/auth', method: 'GET' },
   ]
 
-  if (middlewareMatched(endpoints, getRequestURL(event).pathname)) {
+  if (middlewareMatched(endpoints, event.path, event.method)) {
     try {
       // Get the access token
       let accessToken = getHeader(event, 'Authorization')?.split(' ')[1]

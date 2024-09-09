@@ -1,5 +1,5 @@
-import type { z } from 'zod'
 import { FetchError } from 'ofetch'
+import type { z } from 'zod'
 import {
   AccessTokenExpiredError,
   FatalError,

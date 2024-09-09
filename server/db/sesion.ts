@@ -26,3 +26,7 @@ export function updateSessionCode(id: string) {
     data: { code },
   })
 }
+
+export function deleteSessionById(id: string) {
+  return prisma.session.delete({ where: { id } })
+}

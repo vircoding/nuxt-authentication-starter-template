@@ -1,5 +1,5 @@
-import { H3Error } from 'h3'
 import { Prisma } from '@prisma/client'
+import { H3Error } from 'h3'
 import { userIdSchema } from '~/schemas/user.schema'
 import { findUserById } from '~/server/db/user'
 
