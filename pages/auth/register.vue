@@ -25,10 +25,10 @@ async function onSubmit() {
     <h1>Register</h1>
 
     <form @submit.prevent="onSubmit">
-      <input v-model="input.username" type="text" placeholder="Username">
-      <input v-model="input.email" type="email" placeholder="Email">
-      <input v-model="input.password" type="password" placeholder="Password">
-      <input v-model="input.repassword" type="password" placeholder="Repassword">
+      <input v-model="input.username" name="username" autocomplete="username" type="text" placeholder="Username">
+      <input v-model="input.email" name="email" autocomplete="email" type="email" placeholder="Email">
+      <input v-model="input.password" name="password" type="password" placeholder="Password">
+      <input v-model="input.repassword" name="repassword" type="password" placeholder="Repassword">
       <button>Regiter</button>
     </form>
   </div>

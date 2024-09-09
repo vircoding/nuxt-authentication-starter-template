@@ -23,8 +23,8 @@ async function onSubmit() {
     <h1>Login</h1>
 
     <form @submit.prevent="onSubmit">
-      <input v-model="input.email" type="email" placeholder="Email">
-      <input v-model="input.password" type="password" placeholder="Password">
+      <input v-model="input.email" name="email" autocomplete="email" type="email" placeholder="Email">
+      <input v-model="input.password" name="password" type="password" placeholder="Password">
       <button>Login</button>
     </form>
   </div>
