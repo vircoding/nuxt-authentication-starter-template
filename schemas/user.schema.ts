@@ -17,4 +17,6 @@ export const loginSchema = z.object({
   password: z.string().min(6).max(40),
 })
 
-export const userIdSchema = z.string()
+export const updateSchema = z.object({
+  username: z.string().min(3).max(10),
+})

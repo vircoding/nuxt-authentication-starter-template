@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client'
 import { H3Error } from 'h3'
-import { userIdSchema } from '~/schemas/user.schema'
+import { z } from 'zod'
 import { findUserById } from '~/server/db/user'
 
 export default defineEventHandler(async (event) => {
@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
     let userId = event.context.userId
 
     // Validate the userId
-    userId = await userIdSchema.parseAsync(userId)
+    userId = await z.string().parseAsync(userId)
 
     // Find the user by id
     const user = await findUserById(userId)
@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
   }
   catch (error) {
     // Prisma Error handler
-    if ((error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025')) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
       throw createError({
         status: 404,
         statusMessage: 'Not Found',

@@ -6,10 +6,13 @@ import { accessTokenSchema, decodedAccessTokenSchema } from '~/schemas/token.sch
 export default defineEventHandler(async (event) => {
   const endpoints = [
     { path: '/api/auth', method: 'GET' },
+    { path: '/api/auth', method: 'PATCH' },
   ]
 
   if (middlewareMatched(endpoints, event.path, event.method)) {
     try {
+      console.info('Herer')
+
       // Get the access token
       let accessToken = getHeader(event, 'Authorization')?.split(' ')[1]
 

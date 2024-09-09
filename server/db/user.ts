@@ -69,3 +69,10 @@ export function verifyUser(id: string) {
 export function findUserByEmail(email: string) {
   return prisma.user.findUniqueOrThrow({ where: { email } }) // throws P2025 if not found
 }
+
+export function updateUserById(id: string, data: { username: string }) {
+  return prisma.user.update({
+    where: { id },
+    data: { username: data.username },
+  })
+}
