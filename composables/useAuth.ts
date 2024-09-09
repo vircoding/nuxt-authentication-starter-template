@@ -29,7 +29,7 @@ async function register(body: RegisterBody) {
 
 async function login(body: LoginBody) {
   try {
-    const data = await $fetch('/api/auth/login', { method: 'post', body })
+    const data = await $fetch('/api/auth/login', { method: 'POST', body })
     accessTokenState().value = data.access_token
     userState().value = data.user
   }
@@ -37,6 +37,27 @@ async function login(body: LoginBody) {
     if (error instanceof FetchError) {
       // TODO Handle Errors
       throw new FatalError('Unhadled error')
+    }
+    throw new FatalError('Unexpected error')
+  }
+}
+
+async function logout() {
+  try {
+    await $fetch('/api/auth/logout', { method: 'POST' })
+    clearNuxtState('accessToken')
+    clearNuxtState('user')
+  }
+  catch (error) {
+    if (error instanceof FetchError) {
+      if (error.status !== undefined) {
+        if (error.status === 401) {
+          throw new RefreshTokenExpiredError('The refresh token has expired')
+        }
+        else if (error.status === 400) {
+          throw new InvalidRefreshTokenError('Refresh token error')
+        }
+      }
     }
     throw new FatalError('Unexpected error')
   }
@@ -94,5 +115,5 @@ async function init() {
 }
 
 export default function () {
-  return { register, login, refresh, getUser, init }
+  return { register, login, logout, refresh, getUser, init }
 }
