@@ -3,7 +3,7 @@ import { H3Error } from 'h3'
 import { ZodError } from 'zod'
 import { passwordCodeSchema } from '~/schemas/user.schema'
 import { deletePasswordCodeById, findPasswordCodeByUserId } from '~/server/db/passwordCode'
-import { findUserByEmail, setPasswordPendingById } from '~/server/db/user'
+import { findUserByEmail, setPasswordPendingById, unsetPasswordPendingByIdTimeout } from '~/server/db/user'
 import { BodyError, PasswordCodeError } from '~/server/models/Error'
 
 export default defineEventHandler(async (event) => {
@@ -33,6 +33,14 @@ export default defineEventHandler(async (event) => {
 
     // Delete the password code
     await deletePasswordCodeById(passwordCode.id)
+
+    // Unset the password pending code after 1.5 minutes
+    try {
+      unsetPasswordPendingByIdTimeout(user.id, 90000)
+    }
+    catch (error) {
+      console.error('An error has ocurred while deleting the password code', error)
+    }
 
     return { ok: true }
   }
@@ -65,18 +73,16 @@ export default defineEventHandler(async (event) => {
         status: 400,
         statusMessage: 'Bad Request',
         message: 'Invalid or missing required parameters',
-        data: {
-          fields,
-        },
+        data: { fields },
       })
     }
 
     // Prisma Error handler
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
       throw createError({
-        status: 404,
-        statusMessage: 'Not Found',
-        message: 'User not found',
+        status: 401,
+        statusMessage: 'Unauthorized',
+        message: 'User is not pending for password reset or does not exists',
       })
     }
 

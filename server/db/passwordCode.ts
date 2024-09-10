@@ -17,3 +17,11 @@ export function findPasswordCodeByUserId(userId: string) {
 export function deletePasswordCodeById(id: string) {
   return prisma.passwordCode.delete({ where: { id } })
 }
+
+export function deletePasswordCodeByIdTimeout(id: string, timeout: number) {
+  return new Promise<true>((resolve, reject) => {
+    setTimeout(async () => {
+      await deletePasswordCodeById(id).then(() => resolve(true)).catch(error => reject(error))
+    }, timeout)
+  })
+}

@@ -81,6 +81,17 @@ export function setPasswordPendingById(id: string) {
   return prisma.user.update({ where: { id }, data: { passwordPending: true } })
 }
 
+export function unsetPasswordPendingByIdTimeout(id: string, timeout: number) {
+  return new Promise<true>((resolve, reject) => {
+    setTimeout(async () => {
+      await prisma.user.update({
+        where: { id },
+        data: { passwordPending: { unset: true } },
+      }).then(() => resolve(true)).catch(error => reject(error))
+    }, timeout)
+  })
+}
+
 export function findUserWithPasswordPendingByEmail(email: string) {
   return prisma.user.findFirstOrThrow({ where: { email, passwordPending: true } })
 }

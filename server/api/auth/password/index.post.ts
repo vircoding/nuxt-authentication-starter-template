@@ -2,7 +2,7 @@ import { Prisma } from '@prisma/client'
 import { H3Error } from 'h3'
 import { ZodError } from 'zod'
 import { requestPasswordSchema } from '~/schemas/user.schema'
-import { upsertPasswordCode } from '~/server/db/passwordCode'
+import { deletePasswordCodeByIdTimeout, upsertPasswordCode } from '~/server/db/passwordCode'
 import { findUserByEmail } from '~/server/db/user'
 import { BodyError } from '~/server/models/Error'
 
@@ -33,6 +33,14 @@ export default defineEventHandler(async (event) => {
     }
     catch (error) {
       console.error('An error has ocurred while sending the password email', error)
+    }
+
+    // Delete the password code after 2 minutes
+    try {
+      deletePasswordCodeByIdTimeout(passwordCode.id, 120000)
+    }
+    catch (error) {
+      console.error('An error has ocurred while deleting the password code', error)
     }
 
     // Send the success response
