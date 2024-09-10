@@ -16,11 +16,8 @@ type UpdateBody = z.infer<typeof updateSchema>
 async function register(body: RegisterBody) {
   try {
     const data = await $fetch('/api/auth/register', { method: 'POST', body })
-    useSessionData().value.accessToken = data.access_token
-    useSessionData().value.isLoggedIn = true
-    useUserData().value.id = data.user.id
-    useUserData().value.username = data.user.username
-    useUserData().value.verified = data.user.verified
+    useSessionData().value = { accessToken: data.access_token, isLoggedIn: true }
+    useUserData().value = data.user
   }
   catch (error) {
     if (error instanceof FetchError) {
@@ -34,11 +31,8 @@ async function register(body: RegisterBody) {
 async function login(body: LoginBody) {
   try {
     const data = await $fetch('/api/auth/login', { method: 'POST', body })
-    useSessionData().value.accessToken = data.access_token
-    useSessionData().value.isLoggedIn = true
-    useUserData().value.id = data.user.id
-    useUserData().value.username = data.user.username
-    useUserData().value.verified = data.user.verified
+    useSessionData().value = { accessToken: data.access_token, isLoggedIn: true }
+    useUserData().value = data.user
   }
   catch (error) {
     if (error instanceof FetchError) {
@@ -73,8 +67,7 @@ async function logout() {
 async function refresh() {
   try {
     const data = await $fetch('/api/auth/refresh', { method: 'POST' })
-    useSessionData().value.accessToken = data.access_token
-    useSessionData().value.isLoggedIn = true
+    useSessionData().value = { accessToken: data.access_token, isLoggedIn: true }
   }
   catch (error) {
     if (error instanceof FetchError) {
@@ -98,9 +91,7 @@ async function getUser() {
         Authorization: `Bearer ${useSessionData().value.accessToken}`,
       },
     })
-    useUserData().value.id = data.user.id
-    useUserData().value.username = data.user.username
-    useUserData().value.verified = data.user.verified
+    useUserData().value = data.user
   }
   catch (error) {
     if (error instanceof FetchError) {
@@ -134,7 +125,7 @@ async function update(body: UpdateBody) {
       },
       body,
     })
-    useUserData().value.username = data.user.username
+    useUserData().value = data.user
   }
   catch (error) {
     if (error instanceof FetchError) {
@@ -145,6 +136,24 @@ async function update(body: UpdateBody) {
   }
 }
 
+async function resendVerificationEmail() {
+  try {
+    await $fetch('/api/auth/verify/resend', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${useSessionData().value.accessToken}`,
+      },
+    })
+  }
+  catch (error) {
+    if (error instanceof FetchError) {
+      // TODO Handle Errors
+      throw new FatalError('Unhandled error')
+    }
+    throw new FatalError('Unexpected error')
+  }
+}
+
 export default function () {
-  return { register, login, logout, refresh, getUser, init, update }
+  return { register, login, logout, refresh, getUser, init, update, resendVerificationEmail }
 }

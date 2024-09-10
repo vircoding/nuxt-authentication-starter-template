@@ -1,9 +1,23 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const { resendVerificationEmail } = useAuth()
+
+async function onResend() {
+  try {
+    await resendVerificationEmail()
+  }
+  catch (error) {
+    if (error instanceof Error)
+      showError(error)
+  }
+}
+</script>
 
 <template>
   <div>
     Verify your account...
-    <button>Reenviar email...</button>
+    <button @click="onResend">
+      Reenviar email...
+    </button>
   </div>
 </template>
 
