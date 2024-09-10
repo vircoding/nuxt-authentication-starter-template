@@ -1,26 +1,5 @@
-<script setup lang="ts">
-const { logout } = useAuth()
-
-const user = userState()
-
-async function onLogout() {
-  try {
-    await logout()
-  }
-  catch (error) {
-    if (error instanceof Error)
-      showError(error)
-  }
-}
-</script>
-
 <template>
   <div>
-    <!-- Logout -->
-    <button v-if="user" @click="onLogout">
-      Logout
-    </button>
-
     <h1>Home</h1>
 
     <!-- Hero -->

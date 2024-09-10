@@ -1,34 +1,24 @@
 <script setup lang="ts">
-import { FatalError } from '~/models/Error'
-
-const { init } = useAuth()
-
-const user = userState()
+const sessionData = useSessionData()
+const userData = useUserData()
 
 const isMainContentVisible = computed(() => {
-  return user.value ? user.value.verified : true
-})
-
-onBeforeMount(async () => {
-  try {
-    await init()
-  }
-  catch (error) {
-    if (error instanceof FatalError) {
-      showError(error)
-    }
-  }
+  return sessionData.value.isLoggedIn ? userData.value.verified : true
 })
 </script>
 
 <template>
+  <!-- Init Loading -->
+  <InitLoading v-if="useInitLoading().value">
+    Loading...
+  </InitLoading>
+
   <!-- Main Content -->
-  <div v-if="isMainContentVisible">
-    <NuxtLayout>
+  <div v-else>
+    <NuxtLayout v-if="isMainContentVisible">
       <NuxtPage />
     </NuxtLayout>
-  </div>
 
-  <!-- Verify -->
-  <VerifyAccount v-else />
+    <VerifyAccount v-else />
+  </div>
 </template>

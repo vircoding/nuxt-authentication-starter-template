@@ -1,9 +1,46 @@
-// Access Token State
-export const accessTokenState = () => useState<string>('accessToken')
+interface User {
+  id?: string
+  username?: string
+  verified?: boolean
+}
 
-export const clearAccessTokenState = () => clearNuxtState('accessToken')
+interface Session {
+  accessToken?: string
+  isLoggedIn: boolean
+}
 
-// User State
-export const userState = () => useState<{ id: string, username: string, verified: boolean }>('user')
+// Session Data
+export function useSessionData() {
+  return useState<Session>('sessionData', () => ({
+    accessToken: undefined,
+    isLoggedIn: false,
+  }))
+}
 
-export const clearUserState = () => clearNuxtState('user')
+export function clearSessionData() {
+  useSessionData().value = {
+    accessToken: undefined,
+    isLoggedIn: false,
+  }
+}
+
+// User Data
+export function useUserData() {
+  return useState<User>('userData', () => ({
+    id: undefined,
+    username: undefined,
+    verified: undefined,
+  }))
+}
+
+export function clearUserData() {
+  useUserData().value = {
+    id: undefined,
+    username: undefined,
+    verified: undefined,
+  }
+}
+
+export function useInitLoading() {
+  return useState<boolean>('initLoading', () => true)
+}

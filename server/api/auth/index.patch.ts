@@ -31,8 +31,6 @@ export default defineEventHandler(async (event) => {
     return { user: userTransformer(user) }
   }
   catch (error) {
-    console.error(error)
-
     // Body Error
     if (error instanceof BodyError) {
       throw createError({

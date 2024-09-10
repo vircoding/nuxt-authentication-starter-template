@@ -1,5 +1,17 @@
 <script setup lang="ts">
-const user = userState()
+const { logout } = useAuth()
+
+const sessionData = useSessionData()
+
+async function onLogout() {
+  try {
+    await logout()
+  }
+  catch (error) {
+    if (error instanceof Error)
+      showError(error)
+  }
+}
 </script>
 
 <template>
@@ -16,14 +28,14 @@ const user = userState()
           </li>
 
           <!-- Login -->
-          <li v-if="!user">
+          <li v-if="!sessionData.isLoggedIn">
             <NuxtLink to="/auth/login">
               Login
             </NuxtLink>
           </li>
 
           <!-- Register -->
-          <li v-if="!user">
+          <li v-if="!sessionData.isLoggedIn">
             <NuxtLink to="/auth/register">
               Register
             </NuxtLink>
@@ -32,10 +44,17 @@ const user = userState()
       </nav>
 
       <!-- User -->
-      <div v-if="user">
-        <h4>User: {{ user.username }}</h4>
+      <div v-if="sessionData.isLoggedIn">
+        <NuxtLink to="/auth/account">
+          My Account
+        </NuxtLink>
       </div>
     </header>
+
+    <!-- Logout -->
+    <button v-if="sessionData.isLoggedIn" @click="onLogout">
+      Logout
+    </button>
 
     <!-- Content -->
     <slot />

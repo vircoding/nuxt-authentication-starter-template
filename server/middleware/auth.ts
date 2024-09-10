@@ -11,8 +11,6 @@ export default defineEventHandler(async (event) => {
 
   if (middlewareMatched(endpoints, event.path, event.method)) {
     try {
-      console.info('Herer')
-
       // Get the access token
       let accessToken = getHeader(event, 'Authorization')?.split(' ')[1]
 

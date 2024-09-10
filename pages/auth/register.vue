@@ -29,7 +29,7 @@ async function onSubmit() {
       <input v-model="input.email" name="email" autocomplete="email" type="email" placeholder="Email">
       <input v-model="input.password" name="password" type="password" placeholder="Password">
       <input v-model="input.repassword" name="repassword" type="password" placeholder="Repassword">
-      <button>Regiter</button>
+      <button>Register</button>
     </form>
   </div>
 </template>
