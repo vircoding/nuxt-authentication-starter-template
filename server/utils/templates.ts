@@ -10,6 +10,12 @@ export async function getVerificationEmail(username: string, verificationToken: 
   return template({ username, verificationToken })
 }
 
+export async function getPasswordEmail(username: string, passwordCode: string) {
+  const file = fs.readFileSync(join(DIR, 'passwordEmail.hbs'))
+  const template = handlebars.compile(file.toString())
+  return template({ username, passwordCode })
+}
+
 export async function getVerificationSuccess(username: string) {
   const file = fs.readFileSync(join(DIR, 'verificationSuccess.hbs'))
   const template = handlebars.compile(file.toString())

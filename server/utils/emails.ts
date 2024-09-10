@@ -18,3 +18,12 @@ export function sendVerificationEmail(email: string, content: string) {
     html: content,
   })
 }
+
+export function sendPasswordEmail(email: string, content: string) {
+  return transporter.sendMail({
+    from: `Nuxt App <${useRuntimeConfig().nodemailerUser}>`,
+    to: email,
+    subject: 'Password reset',
+    html: content,
+  })
+}

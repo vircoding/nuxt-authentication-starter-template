@@ -76,3 +76,20 @@ export function updateUserById(id: string, data: { username: string }) {
     data: { username: data.username },
   })
 }
+
+export function setPasswordPendingById(id: string) {
+  return prisma.user.update({ where: { id }, data: { passwordPending: true } })
+}
+
+export function findUserWithPasswordPendingByEmail(email: string) {
+  return prisma.user.findFirstOrThrow({ where: { email, passwordPending: true } })
+}
+
+export function resetPasswordById(id: string, data: { password: string }) {
+  const hashPassword = bcrypt.hashSync(data.password, 10)
+
+  return prisma.user.update({
+    where: { id },
+    data: { password: hashPassword, passwordPending: { unset: true } },
+  })
+}
