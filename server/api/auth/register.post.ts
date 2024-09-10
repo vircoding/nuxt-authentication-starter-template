@@ -59,7 +59,7 @@ export default defineEventHandler(async (event) => {
       const verificationEmailContent = await getVerificationEmail(user.username, verificationToken)
 
       // Send the verificaion email
-      await sendConfirmationEmail(user.email, verificationEmailContent)
+      sendVerificationEmail(user.email, verificationEmailContent)
     }
     catch (error) {
       console.error('An error has ocurred while sending the confirmation email', error)
@@ -124,7 +124,7 @@ export default defineEventHandler(async (event) => {
 
     // Prisma Error handler
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-      if (error.meta && error.meta.modelName === 'User') {
+      if (error.meta?.modelName === 'User') {
         throw createError({
           status: 409,
           statusMessage: 'Conflict',

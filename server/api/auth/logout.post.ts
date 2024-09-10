@@ -21,20 +21,20 @@ export default defineEventHandler(async (event) => {
     const decodedRefreshToken = await decodedRefreshTokenSchema.parseAsync(payload)
 
     // Find the session by id
-    let session = await findSessionById(decodedRefreshToken.sessionId)
+    const session = await findSessionById(decodedRefreshToken.sessionId)
 
     // Validate the session
     if (session.code !== decodedRefreshToken.code)
       throw new RefreshTokenError('Invalid refresh token')
 
     // Delete the session
-    session = await deleteSessionById(session.id)
+    await deleteSessionById(session.id)
 
     // Delete the refresh token
     deleteCookie(event, 'refresh_token')
 
     // Send the success response
-    return { session_id: session.id }
+    return { ok: true }
   }
   catch (error) {
     // Refresh Token Format Error handler

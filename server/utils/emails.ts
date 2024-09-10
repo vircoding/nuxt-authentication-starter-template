@@ -10,7 +10,7 @@ const transporter = nodemailer.createTransport({
   },
 })
 
-export function sendConfirmationEmail(email: string, content: string) {
+export function sendVerificationEmail(email: string, content: string) {
   return transporter.sendMail({
     from: `Nuxt App <${useRuntimeConfig().nodemailerUser}>`,
     to: email,

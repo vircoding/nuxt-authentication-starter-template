@@ -17,8 +17,17 @@ export function findVerificationCodeById(id: string) {
 
 export function deleteVerificationCodeById(id: string) {
   return new Promise<true>((resolve, reject) => {
-    prisma.verificationCode.delete({ where: { id } })
-      .then(() => resolve(true))
-      .catch(error => reject(error))
+    prisma.verificationCode.delete({
+      where: { id },
+    }).then(() => resolve(true)).catch(error => reject(error))
+  })
+}
+
+export function updateVerificationCodeByUserId(userId: string) {
+  const code = crypto.randomUUID()
+
+  return prisma.verificationCode.update({
+    where: { userId },
+    data: { code },
   })
 }

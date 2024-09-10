@@ -13,7 +13,7 @@ export function createUser(data: { username: string, email: string, password: st
   }) // throws P2002 if email already exists
 }
 
-function findUserNotVerifiedById(id: string) {
+export function findUserNotVerifiedById(id: string) {
   return prisma.user.findUniqueOrThrow({
     where: {
       id,
