@@ -1,17 +1,5 @@
 <script setup lang="ts">
-const { logout } = useAuth()
-
 const sessionData = useSessionData()
-
-async function onLogout() {
-  try {
-    await logout()
-  }
-  catch (error) {
-    if (error instanceof Error)
-      showError(error)
-  }
-}
 </script>
 
 <template>
@@ -50,11 +38,6 @@ async function onLogout() {
         </NuxtLink>
       </div>
     </header>
-
-    <!-- Logout -->
-    <button v-if="sessionData.isLoggedIn" @click="onLogout">
-      Logout
-    </button>
 
     <!-- Content -->
     <slot />
