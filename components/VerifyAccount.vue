@@ -1,11 +1,16 @@
 <script setup lang="ts">
 const { resendVerificationEmail } = useAuth()
 
-const timer1 = useTimer(10)
+const timer = useTimer(60)
+timer.start()
+
+const resendDisabled = ref(false)
 
 async function onResend() {
   try {
+    resendDisabled.value = true
     await resendVerificationEmail()
+    timer.restart()
   }
   catch (error) {
     if (error instanceof Error)
@@ -15,22 +20,21 @@ async function onResend() {
 </script>
 
 <template>
-  <div class="container">
-    Verify your account...
-    <button @click="onResend">
-      Reenviar email...
-    </button>
+  <div>
+    <h2>Verify your account</h2>
+    <p>We just sent you an email with instructions to verify your new account.</p>
+    <div class="container">
+      <button :disabled="timer.isRunning.value" @click="onResend">
+        Resend email...
+      </button>
+      <Timer v-if="timer.isRunning.value" :timer="timer" />
+    </div>
   </div>
-  <Timer :timer="timer1" />
-  <button @click="timer1.start">
-    Start
-  </button>
 </template>
 
 <style scoped>
 .container {
   display: flex;
-  flex-direction: column;
   gap: 10px;
 }
 

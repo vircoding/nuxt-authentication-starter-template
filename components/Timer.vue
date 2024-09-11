@@ -4,6 +4,6 @@ const props = defineProps(['timer'])
 
 <template>
   <div>
-    <span>{{ props.timer.days }}</span>:<span>{{ props.timer.hours }}</span>:<span>{{ props.timer.minutes }}</span>:<span>{{ props.timer.seconds }}</span>
+    <span>{{ props.timer.minutes }}</span>:<span>{{ props.timer.seconds }}</span>
   </div>
 </template>
