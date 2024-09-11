@@ -1,6 +1,8 @@
 <script setup lang="ts">
 const { resendVerificationEmail } = useAuth()
 
+const timer1 = useTimer(10)
+
 async function onResend() {
   try {
     await resendVerificationEmail()
@@ -13,16 +15,20 @@ async function onResend() {
 </script>
 
 <template>
-  <div>
+  <div class="container">
     Verify your account...
     <button @click="onResend">
       Reenviar email...
     </button>
   </div>
+  <Timer :timer="timer1" />
+  <button @click="timer1.start">
+    Start
+  </button>
 </template>
 
 <style scoped>
-div {
+.container {
   display: flex;
   flex-direction: column;
   gap: 10px;
