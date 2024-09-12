@@ -3,7 +3,7 @@ import { H3Error } from 'h3'
 import jwt from 'jsonwebtoken'
 import { ZodError } from 'zod'
 import { decodedRefreshTokenSchema, refreshTokenSchema } from '~/schemas/token.schema'
-import { deleteSessionById, findSessionById } from '~/server/db/sesion'
+import { deleteSessionById, findSessionById } from '~/server/db/session'
 import { RefreshTokenError } from '~/server/models/Error'
 
 export default defineEventHandler(async (event) => {

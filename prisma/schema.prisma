@@ -33,7 +33,7 @@ model VerificationCode {
   updatedAt DateTime @updatedAt
 
   userId String @unique @db.ObjectId
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Session {
@@ -47,7 +47,7 @@ model Session {
   updatedAt DateTime @updatedAt
 
   userId String @db.ObjectId
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model PasswordCode {
@@ -58,5 +58,5 @@ model PasswordCode {
   updatedAt DateTime @updatedAt
 
   userId String @unique @db.ObjectId
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

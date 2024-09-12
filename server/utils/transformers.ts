@@ -1,5 +1,5 @@
 import type { User } from '@prisma/client'
 
-export function userTransformer({ id, username, verified }: User) {
-  return { id, username, verified }
+export function userTransformer({ id, username }: User) {
+  return { id, username }
 }

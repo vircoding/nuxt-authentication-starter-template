@@ -5,7 +5,7 @@ export const refreshTokenSchema = z.string()
 
 export const decodedRefreshTokenSchema = z.object({
   code: z.string(),
-  sessionId: z.string(),
+  id: z.string(),
   userId: z.string(),
 })
 
@@ -21,6 +21,6 @@ export const verificationTokenSchema = z.string()
 
 export const decodedVerificationTokenSchema = z.object({
   code: z.string(),
-  verificationCodeId: z.string(),
+  id: z.string(),
   userId: z.string(),
 })

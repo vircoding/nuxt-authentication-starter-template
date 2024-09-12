@@ -1,16 +1,37 @@
+import { Prisma } from '@prisma/client'
 import bcrypt from 'bcrypt'
 import { prisma } from '.'
+import { ConflictError } from '../models/Error'
 
-export function createUser(data: { username: string, email: string, password: string }) {
-  const hashPassword = bcrypt.hashSync(data.password, 10)
+// export function createUser(data: { username: string, email: string, password: string }) {
+//   const hashPassword = bcrypt.hashSync(data.password, 10)
 
-  return prisma.user.create({
-    data: {
-      username: data.username,
-      email: data.email,
-      password: hashPassword,
-    },
-  }) // throws P2002 if email already exists
+//   return prisma.user.create({
+//     data: {
+//       username: data.username,
+//       email: data.email,
+//       password: hashPassword,
+//     },
+//   }) // throws P2002 if email already exists
+// }
+
+export async function createUser(data: { username: string, email: string, password: string }) {
+  const existingUser = await prisma.user.findUnique({ where: { email: data.email } })
+
+  if (existingUser) {
+    console.info('Hereeee')
+    if (existingUser.verified) {
+      console.info('Verified')
+      throw new ConflictError('Verified user exists already')
+    }
+    else {
+      console.info('Not verified')
+      await prisma.user.delete({ where: { id: existingUser.id } })
+    }
+  }
+
+  const hash = bcrypt.hashSync(data.password, 10)
+  return prisma.user.create({ data: { username: data.username, email: data.email, password: hash } })
 }
 
 export function findUserNotVerifiedById(id: string) {
@@ -22,7 +43,14 @@ export function findUserNotVerifiedById(id: string) {
   })
 }
 
-export function deleteUserById(id: string) {
+export async function deleteUserById(id: string) {
+  await prisma.passwordCode.delete({ where: { userId: id } })
+  await prisma.session.deleteMany({ where: { userId: id } })
+  await prisma.verificationCode.delete({ where: { userId: id } })
+  await prisma.user.delete({ where: { id } })
+}
+
+export function deleteUserById2(id: string) {
   return new Promise<true>((resolve, reject) => {
     // Delete user sessions
     prisma.session.deleteMany({ where: { userId: id } }).then(() => {
@@ -31,7 +59,10 @@ export function deleteUserById(id: string) {
         // Delete user
         prisma.user.delete({ where: { id } }).then(() => resolve(true)).catch(error => reject(error))
       }).catch(error => reject(error))
-    }).catch(error => reject(error))
+    }).catch((error) => {
+      console.info(error)
+      reject(error)
+    })
   })
 }
 

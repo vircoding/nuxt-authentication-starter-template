@@ -1,12 +1,9 @@
 import { Prisma } from '@prisma/client'
-import bcrypt from 'bcrypt'
 import { H3Error } from 'h3'
-import { UAParser } from 'ua-parser-js'
 import { ZodError } from 'zod'
 import { loginSchema } from '~/schemas/user.schema'
-import { createSession } from '~/server/db/session'
-import { findUserByEmail } from '~/server/db/user'
 import { BodyError, CredentialsError } from '~/server/models/Error'
+import { loginUser, verifyUser } from '~/server/services/auth'
 
 export default defineEventHandler(async (event) => {
   try {
@@ -20,31 +17,17 @@ export default defineEventHandler(async (event) => {
     // Validate the input
     const data = await loginSchema.parseAsync(input)
 
-    // Find the user by email
-    const user = await findUserByEmail(data.email)
-
-    // Validate the passwords
-    const passwordMatch = await bcrypt.compare(data.password, user.password)
-    if (!passwordMatch)
-      throw new CredentialsError('Password do not match')
-
-    // Get and parse the user-agent
+    // Get the user-agent
     const ua = getHeader(event, 'user-agent')
-    const parsedUA = UAParser(ua)
 
-    // Create the session
-    const session = await createSession({
-      userId: user.id,
-      browser: parsedUA.browser.name,
-      os: parsedUA.os.name,
-      cpu: parsedUA.cpu.architecture,
-    })
+    // Login the user
+    const { user, session } = await loginUser(data, ua)
 
     // Generate the refresh token
-    const refreshToken = generateRefreshToken({ code: session.code, id: session.id, userId: user.id })
+    const refreshToken = generateRefreshToken({ code: session.code, id: session.id, userId: session.userId })
 
     // Generate the access token
-    const accessToken = generateAccessToken({ id: user.id })
+    const accessToken = generateAccessToken({ id: session.userId })
 
     // Send the refresh token
     setCookie(event, 'refresh_token', refreshToken, {
@@ -52,13 +35,14 @@ export default defineEventHandler(async (event) => {
       sameSite: true,
     })
 
-    // Send the success response
     return {
       access_token: accessToken,
       user: userTransformer(user),
     }
   }
   catch (error) {
+    console.error(error)
+
     // Body Error
     if (error instanceof BodyError) {
       throw createError({
@@ -86,10 +70,7 @@ export default defineEventHandler(async (event) => {
     }
 
     // Bad Credentials Error handler
-    if (
-      (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025')
-      || error instanceof CredentialsError
-    ) {
+    if (error instanceof CredentialsError) {
       throw createError({
         status: 401,
         statusMessage: 'Unauthorized',

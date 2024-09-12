@@ -3,7 +3,7 @@ import { H3Error } from 'h3'
 import jwt from 'jsonwebtoken'
 import { ZodError } from 'zod'
 import { decodedRefreshTokenSchema, refreshTokenSchema } from '~/schemas/token.schema'
-import { findSessionById, updateSessionCode } from '~/server/db/sesion'
+import { findSessionById, updateSessionCode } from '~/server/db/session'
 import { findUserById } from '~/server/db/user'
 import { RefreshTokenError } from '~/server/models/Error'
 

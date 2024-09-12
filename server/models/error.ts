@@ -1,6 +1,4 @@
 export class BodyError extends Error {
-  name: string
-
   constructor(message: string) {
     super(message)
     this.name = 'Body Error'
@@ -8,26 +6,27 @@ export class BodyError extends Error {
 }
 
 export class VerifiedError extends Error {
-  name: string
-
   constructor(message: string) {
     super(message)
     this.name = 'Verified Error'
   }
 }
 
-export class PasswordError extends Error {
-  name: string
-
+export class CredentialsError extends Error {
   constructor(message: string) {
     super(message)
-    this.name = 'Password Error'
+    this.name = 'Credentials Error'
+  }
+}
+
+export class VerificationTokenError extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = 'VerificationTokenError'
   }
 }
 
 export class RefreshTokenError extends Error {
-  name: string
-
   constructor(message: string) {
     super(message)
     this.name = 'Refresh Token Error'
@@ -35,10 +34,15 @@ export class RefreshTokenError extends Error {
 }
 
 export class PasswordCodeError extends Error {
-  name: string
-
   constructor(message: string) {
     super(message)
     this.name = 'Password Code Error'
+  }
+}
+
+export class ConflictError extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = 'Conflict Error'
   }
 }

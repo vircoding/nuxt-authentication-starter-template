@@ -2,9 +2,8 @@ import {
   decodedVerificationTokenSchema,
   verificationTokenSchema,
 } from '~/schemas/token.schema'
-import { findUserById, verifyUser } from '~/server/db/user'
-import { deleteVerificationCodeById, findVerificationCodeById } from '~/server/db/verificationCode'
-import { VerifiedError } from '~/server/models/Error'
+import { VerificationTokenError, VerifiedError } from '~/server/models/Error'
+import { verifyUser } from '~/server/services/auth'
 
 export default defineEventHandler(async (event) => {
   try {
@@ -17,34 +16,13 @@ export default defineEventHandler(async (event) => {
     // Decode the verification token
     const payload = decodeVerificationToken(verificationToken)
     if (!payload)
-      throw new Error('Invalid verification token')
+      throw new VerificationTokenError('Invalid verification token')
 
     // Validate the decoded verification token
     const decodedVerificationToken = await decodedVerificationTokenSchema.parseAsync(payload)
 
-    // Find the user by id
-    let user = await findUserById(decodedVerificationToken.userId)
-
-    // Validate if user its not yet verified
-    if (user.verified)
-      throw new VerifiedError('This account is verified already')
-
-    // Find the verification code by id
-    const verificationCode = await findVerificationCodeById(decodedVerificationToken.verificationCodeId)
-
-    // Validate the verification code
-    if (verificationCode.code !== decodedVerificationToken.code)
-      throw new Error('Invalid verification token')
-
-    // Update the user
-    user = await verifyUser(user.id).catch(() => {
-      throw new Error('The verification has failed')
-    })
-
-    // Delete the verification code
-    await deleteVerificationCodeById(verificationCode.id).catch((error) => {
-      console.error('An error has ocurred while deleting the verification code', error)
-    })
+    // Verify the user
+    const user = await verifyUser(decodedVerificationToken.userId, decodedVerificationToken.code)
 
     // Get the verification success content
     const verificationSuccessContent = await getVerificationSuccess(user.username).catch(() => {
