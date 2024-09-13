@@ -163,3 +163,12 @@ export function resetVerificationCode(email: string) {
     return { user, verificationCode }
   })
 }
+
+export async function findUserById(id: string) {
+  const user = await prisma.user.findUnique({ where: { id } })
+
+  if (!user)
+    throw new NotFoundError('User not found')
+
+  return user
+}

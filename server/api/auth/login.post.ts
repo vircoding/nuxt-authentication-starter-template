@@ -1,9 +1,8 @@
-import { Prisma } from '@prisma/client'
 import { H3Error } from 'h3'
 import { ZodError } from 'zod'
 import { loginSchema } from '~/schemas/user.schema'
 import { BodyError, CredentialsError } from '~/server/models/Error'
-import { loginUser, verifyUser } from '~/server/services/auth'
+import { loginUser } from '~/server/services/auth'
 
 export default defineEventHandler(async (event) => {
   try {

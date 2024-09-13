@@ -24,7 +24,7 @@ export default defineEventHandler(async (event) => {
       const decodedAccessToken = await decodedAccessTokenSchema.parseAsync(payload)
 
       // Add userId to context
-      event.context.userId = decodedAccessToken.userId
+      event.context.userId = decodedAccessToken.id
     }
     catch (error) {
       // Access Token Format Error handler

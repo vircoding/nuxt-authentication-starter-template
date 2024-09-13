@@ -1,7 +1,7 @@
-import { Prisma } from '@prisma/client'
 import { H3Error } from 'h3'
 import { z } from 'zod'
-import { findUserById } from '~/server/db/user'
+import { NotFoundError } from '~/server/models/Error'
+import { findUserById } from '~/server/services/auth'
 
 export default defineEventHandler(async (event) => {
   try {
@@ -18,8 +18,8 @@ export default defineEventHandler(async (event) => {
     return { user: userTransformer(user) }
   }
   catch (error) {
-    // Prisma Error handler
-    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+    // Not Found Error
+    if (error instanceof NotFoundError) {
       throw createError({
         status: 404,
         statusMessage: 'Not Found',

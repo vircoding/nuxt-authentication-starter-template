@@ -13,7 +13,7 @@ export const decodedRefreshTokenSchema = z.object({
 export const accessTokenSchema = z.string()
 
 export const decodedAccessTokenSchema = z.object({
-  userId: z.string(),
+  id: z.string(),
 })
 
 // Verification token
