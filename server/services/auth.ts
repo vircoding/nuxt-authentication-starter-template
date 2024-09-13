@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt'
 import { UAParser } from 'ua-parser-js'
 import type { User, VerificationCode } from '@prisma/client'
 import prisma from '~/server/services/db'
-import { ConflictError, CredentialsError, VerificationTokenError, VerifiedError } from '../models/Error'
+import { ConflictError, CredentialsError, NotFoundError, VerificationTokenError, VerifiedError } from '../models/Error'
 
 interface UserRegisterData {
   username: string
@@ -113,7 +113,7 @@ export function loginUser(userData: UserLoginData, ua: string | undefined) {
       throw new CredentialsError('User not founded or wrong password')
 
     // Compare passwords
-    const passwordMatch = await bcrypt.compare(user.password, userData.password)
+    const passwordMatch = await bcrypt.compare(userData.password, user.password)
     if (!passwordMatch)
       throw new CredentialsError('User not founded or wrong password')
 
@@ -137,5 +137,29 @@ export function loginUser(userData: UserLoginData, ua: string | undefined) {
     })
 
     return { user, session }
+  })
+}
+
+export function resetVerificationCode(email: string) {
+  return prisma.$transaction(async (tx) => {
+    // Find the verified user by email
+    const user = await tx.user.findUnique({
+      where: { email },
+      select: { id: true, username: true, email: true, verified: true },
+    })
+
+    if (!user)
+      throw new NotFoundError('User not found')
+
+    if (user.verified)
+      throw new VerifiedError('This account is verified already')
+
+    const verificationCode = await tx.verificationCode.update({
+      where: { userId: user.id },
+      data: { code: crypto.randomUUID() },
+      select: { id: true, code: true, userId: true },
+    })
+
+    return { user, verificationCode }
   })
 }

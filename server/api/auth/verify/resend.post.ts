@@ -1,51 +1,80 @@
 import { Prisma } from '@prisma/client'
 import { H3Error } from 'h3'
-import { z } from 'zod'
-import { findUserNotVerifiedById } from '~/server/db/user'
-import { updateVerificationCodeByUserId } from '~/server/db/verificationCode'
+import { ZodError } from 'zod'
+import { loginSchema, resendSchema } from '~/schemas/user.schema'
+import { BodyError, CredentialsError, NotFoundError, VerifiedError } from '~/server/models/Error'
+import { loginUser, resetVerificationCode, verifyUser } from '~/server/services/auth'
 
 export default defineEventHandler(async (event) => {
   try {
-    // Get the userId
-    let userId = event.context.userId
+    // Read the body of the request
+    const input = await readBody(event)
 
-    // Validate the userId
-    userId = await z.string().parseAsync(userId)
+    // Validate the body
+    if (!input)
+      throw new BodyError('Body is missing')
 
-    // Check if the user is verified
-    const user = await findUserNotVerifiedById(userId)
+    // Validate the input
+    const data = await resendSchema.parseAsync(input)
 
-    // Update the verification code
-    const verificationCode = await updateVerificationCodeByUserId(user.id)
+    // Reset verification code
+    const { user, verificationCode } = await resetVerificationCode(data.email)
 
-    try {
-      // Generate the verification token
-      const verificationToken = generateVerificationToken({
-        code: verificationCode.code,
-        verificationCodeId: verificationCode.id,
-        userId: user.id,
-      })
+    // Generate the verification token
+    const verificationToken = generateVerificationToken({
+      code: verificationCode.code,
+      id: verificationCode.id,
+      userId: verificationCode.userId,
+    })
 
-      // Get the verification email
-      const verificationEmailContent = await getVerificationEmail(user.username, verificationToken)
+    // Get the verification email
+    const verificationEmailContent = await getVerificationEmail(user.username, verificationToken)
 
-      // Send the verificaion email
-      sendVerificationEmail(user.email, verificationEmailContent)
-    }
-    catch (error) {
-      console.error('An error has ocurred while sending the confirmation email', error)
-    }
+    // Send the verificaion email
+    sendVerificationEmail(user.email, verificationEmailContent)
 
-    // Send the success response
     return { ok: true }
   }
   catch (error) {
-    // Prisma Error handler
-    if (error instanceof Prisma.PrismaClientKnownRequestError && error.message === 'No User found') {
+    // Body Error
+    if (error instanceof BodyError) {
+      throw createError({
+        status: 400,
+        statusMessage: 'Bad Request',
+        message: 'Invalid JSON body',
+      })
+    }
+
+    // Zod Error handler
+    if (error instanceof ZodError) {
+      const fields = error.errors.map(issue => ({
+        field: issue.path.join('.'),
+        message: issue.message,
+      }))
+
+      throw createError({
+        status: 400,
+        statusMessage: 'Bad Request',
+        message: 'Invalid or missing required parameters',
+        data: {
+          fields,
+        },
+      })
+    }
+
+    if (error instanceof NotFoundError) {
       throw createError({
         status: 404,
         statusMessage: 'Not Found',
         message: 'User not found',
+      })
+    }
+
+    if (error instanceof VerifiedError) {
+      throw createError({
+        status: 409,
+        statusMessage: 'Conflict',
+        message: 'This account is verified already',
       })
     }
 

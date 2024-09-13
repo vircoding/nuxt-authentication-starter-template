@@ -26,6 +26,13 @@ export class VerificationTokenError extends Error {
   }
 }
 
+export class NotFoundError extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = 'Not Found Error'
+  }
+}
+
 export class RefreshTokenError extends Error {
   constructor(message: string) {
     super(message)
